@@ -5,11 +5,11 @@ change.
 
 ## Current Phase
 
-- Feature 05 (Prisma) implemented except the DB migration (blocked on DB permissions); Feature 04 awaiting review
+- Feature 07 (wire editor home) implemented; Feature 05 migration applied and verified; browser check of 04/06/07 pending
 
 ## Current Goal
 
-- Feature 05: Prisma models, client singleton, first migration. Spec in `context/feature-specs/05-prisma.md`
+- Feature 07: wire sidebar + dialogs to the real project API. Spec in `context/feature-specs/07-wire-editor-home.md`
 
 ## Completed
 
@@ -35,13 +35,18 @@ change.
 
 - Feature 05: downgraded CLI to Prisma 7 (`prisma@7.10.1`, matches `@prisma/client`); removed the v8 RC scaffold (`src/prisma`, v8 `prisma.config.ts`, `prisma-8.md`, `@prisma/orm-postgres`, `@prisma/cli-engine`). Added `prisma/schema.prisma` (generator `prisma-client` -> `generated/prisma`, gitignored + eslint-ignored), `prisma/models/project.prisma` (`ProjectStatus`, `Project`, `ProjectCollaborator` with cascade, unique project/email, required indexes), `prisma.config.ts` (loads `.env.local`, schema dir `prisma`), `lib/prisma.ts` (cached singleton on `globalThis`; `prisma+postgres://` -> Accelerate, else `@prisma/adapter-pg` honoring `?schema=`). Installed `@prisma/extension-accelerate` (needed for the Accelerate branch). Migration SQL generated at `prisma/migrations/20261118200534_init` (via `migrate diff`, since `migrate dev` needs a shadow DB). `prisma generate` + `bun run build` pass.
 
-## In Progress
+- Feature 06: `app/api/projects/route.ts` (GET list own projects newest first; POST create, name defaults to `Untitled Project`, cuid id from schema) and `app/api/projects/[projectId]/route.ts` (PATCH rename, DELETE; 401 unauthenticated, 404 missing, 403 non-owner, 400 empty/invalid name). Helpers in `libs/api.ts`. `proxy.ts` now lets `/api/*` through because Clerk's `auth.protect()` returns 404 for unauthenticated API calls; handlers enforce auth and return 401. `lib/prisma.ts` now typed as `PrismaClient` (union type from the Accelerate branch broke call signatures). tsc, eslint, `bun run build` pass; unauthenticated GET/POST/PATCH/DELETE verified 401 on a prod server. Authenticated paths (200/201/403/404) NOT exercised: the Feature 05 migration is not applied, so tables don't exist yet.
 
-- Feature 05 migration NOT applied: `ghost_admin` has no CREATE on schema `ghost` (owner `postgres`) or on the database, so `migrate deploy` fails creating `_prisma_migrations`. Needs a superuser to run `GRANT USAGE, CREATE ON SCHEMA ghost TO ghost_admin;`, then `bunx prisma migrate deploy`.
+- Feature 07: `libs/projects-data.ts` (server-only `getProjects()`: owned + shared via `ProjectCollaborator` email match, case-insensitive) replaces mock data; `app/editor/layout.tsx` fetches server-side inside `<Suspense>` (required by Cache Components) and passes `projects` to `EditorShell` -> sidebar (fetched in the layout, not the page, because the sidebar is mounted by the layout and shared with workspace pages). New `hooks/use-project-actions.ts` replaces `components/editor/use-project-dialogs.ts` (deleted): create (name input, 6-char suffix, `createRoomId` = slug + suffix, POST, `router.push('/editor/<id>')`), rename (prefilled, PATCH, refresh), delete (DELETE, redirect to `/editor` if the active workspace else refresh), with error display in dialogs. Create dialog shows Room ID preview; rename dialog has no slug preview. Project ID === Liveblocks room ID: `POST /api/projects` now accepts an optional validated `id` (lowercase slug, <=100 chars; 409 on duplicate). Added a placeholder `app/editor/[projectId]/page.tsx` (404 if not accessible) so create has somewhere to navigate. `Project` type is now `{id, name, isOwner}`. tsc, eslint, `bun run build` pass. NOT exercised against the DB or in a browser (migration unapplied, sign-in needed).
+
+- Feature 05 migration applied to `ghost` (RDS). Removed `CREATE SCHEMA` from `20261118200534_init` (needs DB-level CREATE even with IF NOT EXISTS; the schema is pre-created), marked the first failed attempt rolled back, redeployed. Verified in the DB: tables `Project`, `ProjectCollaborator`, enum `ProjectStatus`, all columns, 4 indexes + unique(projectId,email), FK with ON DELETE CASCADE. `lib/prisma.ts` now enables SSL for non-local hosts: the pg adapter sent no SSL and RDS answered P1010 `no pg_hba.conf entry ... no encryption`. (Superseded: SSL now verifies certs against the pinned `certs/rds-global-bundle.pem` for `*.rds.amazonaws.com`, system CAs for other remote hosts.) Runtime smoke test via the singleton: create project + collaborator, cascade delete OK (test rows removed).
+- Fixed: created projects didn't show in the sidebar (layout isn't re-rendered on `router.push`); create now also calls `router.refresh()` like rename/delete. Needs browser confirmation.
+- Fixed: delete of the open workspace left a stale sidebar (`router.push` alone). Create and delete-of-active now use `navigateAndRefresh` (push + refresh in one `startTransition`); API create/rename/delete also call `revalidatePath('/editor','layout')`. Needs browser confirmation.
+- Verify Features 04/06/07 end-to-end in a signed-in browser (sidebar list, create -> navigate, rename, delete).
 
 ## Next Up
 
-- Apply the Feature 05 migration, then Feature 06 (see `context/feature-specs/`)
+- Browser verification above; then the next feature spec.
 
 ## Open Questions
 
@@ -58,6 +63,8 @@ change.
   one to keep (project rule is bun).
 
 - Feature 03 spec said Clerk was installed with sign-in/up env vars; actually `@clerk/nextjs` was missing and `.env.local` had only the two keys. Installed `@clerk/nextjs`, and added Clerk's standard `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `..._SIGN_UP_URL` and the two `..._FALLBACK_REDIRECT_URL` vars (=/editor) to `.env.local`. Needs the same vars on any deploy env.
+
+- `.env.local` `DATABASE_URL` must use `?schema=ghost` (Prisma param); `currentSchema=` is ignored by Prisma and falls back to `public`.
 
 ## Architecture Decisions
 

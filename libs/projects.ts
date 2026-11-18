@@ -1,7 +1,7 @@
 export type Project = {
+  /** Also the Liveblocks room ID. */
   id: string;
   name: string;
-  slug: string;
   /** Owned projects can be renamed/deleted; shared ones cannot. */
   isOwner: boolean;
 };
@@ -15,11 +15,13 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-// Mock data only: no API calls or persistence yet.
-export const mockProjects: Project[] = [
-  { id: "p1", name: "Payments Platform", slug: "payments-platform", isOwner: true },
-  { id: "p2", name: "Realtime Chat", slug: "realtime-chat", isOwner: true },
-  { id: "p3", name: "Data Pipeline", slug: "data-pipeline", isOwner: true },
-  { id: "p4", name: "Auth Service", slug: "auth-service", isOwner: false },
-  { id: "p5", name: "Mobile Backend", slug: "mobile-backend", isOwner: false },
-];
+/** Room ID = slugified name + short unique suffix, e.g. `payments-platform-k3x9a2`. */
+export function createRoomId(name: string, suffix: string): string {
+  return [slugify(name), suffix].filter(Boolean).join("-");
+}
+
+export function generateSuffix(): string {
+  return crypto.randomUUID().replace(/-/g, "").slice(0, 6);
+}
+
+export const ROOM_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

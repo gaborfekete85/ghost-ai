@@ -3,13 +3,22 @@
 import type { FormEvent } from "react";
 
 import { EditorDialog } from "@/components/editor/editor-dialog";
-import type { ProjectDialogsState } from "@/components/editor/use-project-dialogs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { ProjectActionsState } from "@/hooks/use-project-actions";
 
-export function ProjectDialogs({ state }: { state: ProjectDialogsState }) {
-  const { dialog, name, setName, slug, isLoading, canSubmit, close, submit } =
-    state;
+export function ProjectDialogs({ state }: { state: ProjectActionsState }) {
+  const {
+    dialog,
+    name,
+    setName,
+    roomId,
+    isLoading,
+    error,
+    canSubmit,
+    close,
+    submit,
+  } = state;
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -46,12 +55,17 @@ export function ProjectDialogs({ state }: { state: ProjectDialogsState }) {
               disabled={isLoading}
             />
             <p className="text-xs text-text-muted">
-              Slug:{" "}
+              Room ID:{" "}
               <span className="font-mono text-text-secondary">
-                {slug || "your-project"}
+                {roomId || "your-project"}
               </span>
             </p>
           </div>
+          {error ? (
+            <p role="alert" className="text-xs text-state-error">
+              {error}
+            </p>
+          ) : null}
           <div className="flex justify-end gap-2">
             {cancel}
             <Button type="submit" disabled={!canSubmit}>
@@ -81,13 +95,12 @@ export function ProjectDialogs({ state }: { state: ProjectDialogsState }) {
               aria-label="Project name"
               disabled={isLoading}
             />
-            <p className="text-xs text-text-muted">
-              Slug:{" "}
-              <span className="font-mono text-text-secondary">
-                {slug || "your-project"}
-              </span>
-            </p>
           </div>
+          {error ? (
+            <p role="alert" className="text-xs text-state-error">
+              {error}
+            </p>
+          ) : null}
           <div className="flex justify-end gap-2">
             {cancel}
             <Button type="submit" disabled={!canSubmit}>
@@ -108,6 +121,11 @@ export function ProjectDialogs({ state }: { state: ProjectDialogsState }) {
         }
         footer={
           <>
+            {error ? (
+              <p role="alert" className="mr-auto text-xs text-state-error">
+                {error}
+              </p>
+            ) : null}
             {cancel}
             <Button
               type="button"
