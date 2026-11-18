@@ -1,10 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+
+async function Redirector(): Promise<null> {
+  const { isAuthenticated } = await auth();
+  redirect(isAuthenticated ? "/editor" : "/sign-in");
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <p>Ghost AI</p>
-      <Button>Test</Button>
-    </div>
+    <Suspense>
+      <Redirector />
+    </Suspense>
   );
 }

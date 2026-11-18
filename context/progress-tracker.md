@@ -5,12 +5,12 @@ change.
 
 ## Current Phase
 
-- Feature 02 (editor chrome) complete — awaiting review
+- Feature 04 (project dialogs) in progress; Feature 03 (auth) awaiting review
 
 ## Current Goal
 
-- None active. Last goal: Feature 02, spec in
-  `context/feature-specs/02-editor.md`
+- Feature 04: editor home + create/rename/delete project dialogs + sidebar actions (mock data only). Spec in
+  `context/feature-specs/04-project-dialogs.md`
 
 ## Completed
 
@@ -28,13 +28,19 @@ change.
 
 - Feature 02: `components/editor/editor-navbar.tsx` (h-12, left/center/right, `PanelLeftOpen/Close` toggle, props `isSidebarOpen` + `onToggleSidebar`), `project-sidebar.tsx` (fixed overlay, slides from left, `isOpen`, header + close, shadcn Tabs My Projects/Shared with empty states, full-width New Project button), `editor-dialog.tsx` (title, description, body, footer; color tokens). tsc (excluding stale `.next/types`) + eslint clean. Mounted globally: `components/editor/editor-shell.tsx` (client; owns sidebar open state) wraps `{children}` in `app/layout.tsx`. Verified in Chrome: sidebar overlays without pushing content, no console errors.
 
+- Feature 03: `@clerk/nextjs` + `@clerk/ui` installed (bun). `ClerkProvider` wraps root layout with `libs/clerk-appearance.ts` (Clerk `dark` theme + app CSS variables, no hex). `proxy.ts` at root: public = sign-in/sign-up env paths, everything else `auth.protect()`. Pages `app/sign-in/[[...sign-in]]`, `app/sign-up/[[...sign-up]]` using `components/auth/auth-layout.tsx` (two-panel on lg, form only on small). `/` redirects to `/editor` or `/sign-in`. `UserButton` in editor navbar right section. `EditorShell` moved from root layout to `app/editor/layout.tsx` (so auth pages have no editor chrome); placeholder `app/editor/page.tsx`. `bun run build` passes; signed-out curl: `/` and `/editor` redirect to sign-in, auth pages 200.
+
+- Feature 03 restyle (per `context/feature-asset/auth.jpg`): auth layout is now 50/50 on lg; left panel uses `bg-bg-surface` against the `bg-bg-base` right side, with headline, description, icon+title+description feature list and footer. Body uses `font-sans` (Geist via `--font-sans`; Clerk uses the same). Removed `new Date()` from the footer, which broke prerendering under Cache Components.
+
+- Feature 04: `libs/projects.ts` (Project type, `slugify`, mock data), `components/editor/use-project-dialogs.ts` (dialog/form/loading state, in-memory create/rename/delete with simulated delay), `project-dialogs.tsx` (Create with live slug preview, Rename prefilled + autofocus + Enter submits, Delete destructive confirm), `editor-home.tsx` (heading, description, New Project button) via `editor-actions-context.tsx`. Sidebar lists mock projects; rename/delete icons only on owned projects; mobile backdrop scrim closes sidebar. tsc + eslint clean. NOT yet verified in browser (needs sign-in).
+
 ## In Progress
 
-- None.
+- None (Feature 04 awaiting review).
 
 ## Next Up
 
-- Feature 03 (see `context/feature-specs/`)
+- Feature 05 (see `context/feature-specs/`)
 
 ## Open Questions
 
@@ -49,6 +55,8 @@ change.
 - Two lockfiles now exist (`package-lock.json` from the template,
   `bun.lock` from bun). `package-lock.json` is stale; decide which
   one to keep (project rule is bun).
+
+- Feature 03 spec said Clerk was installed with sign-in/up env vars; actually `@clerk/nextjs` was missing and `.env.local` had only the two keys. Installed `@clerk/nextjs`, and added Clerk's standard `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `..._SIGN_UP_URL` and the two `..._FALLBACK_REDIRECT_URL` vars (=/editor) to `.env.local`. Needs the same vars on any deploy env.
 
 ## Architecture Decisions
 
