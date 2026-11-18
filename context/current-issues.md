@@ -1,1 +1,2 @@
-After delete the sidebar is not updated / refreshed. 
+Explore the @context/current-issues.md file and deeply analyze the problem. Only when you have the analysis, give it back to me
+  with the idea of how you're planning to solve it, and then wait for me to give you the green light to execute it.

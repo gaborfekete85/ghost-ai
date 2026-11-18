@@ -5,11 +5,11 @@ change.
 
 ## Current Phase
 
-- Feature 07 (wire editor home) implemented; Feature 05 migration applied and verified; browser check of 04/06/07 pending
+- Feature 09 (share dialog) implemented; browser check of 04/06/07/08/09 pending
 
 ## Current Goal
 
-- Feature 07: wire sidebar + dialogs to the real project API. Spec in `context/feature-specs/07-wire-editor-home.md`
+- Feature 09: Share dialog (invite / list / remove collaborators, copy link). Spec in `context/feature-specs/09-share-dialog.md`
 
 ## Completed
 
@@ -42,7 +42,9 @@ change.
 - Feature 05 migration applied to `ghost` (RDS). Removed `CREATE SCHEMA` from `20261118200534_init` (needs DB-level CREATE even with IF NOT EXISTS; the schema is pre-created), marked the first failed attempt rolled back, redeployed. Verified in the DB: tables `Project`, `ProjectCollaborator`, enum `ProjectStatus`, all columns, 4 indexes + unique(projectId,email), FK with ON DELETE CASCADE. `lib/prisma.ts` now enables SSL for non-local hosts: the pg adapter sent no SSL and RDS answered P1010 `no pg_hba.conf entry ... no encryption`. (Superseded: SSL now verifies certs against the pinned `certs/rds-global-bundle.pem` for `*.rds.amazonaws.com`, system CAs for other remote hosts.) Runtime smoke test via the singleton: create project + collaborator, cascade delete OK (test rows removed).
 - Fixed: created projects didn't show in the sidebar (layout isn't re-rendered on `router.push`); create now also calls `router.refresh()` like rename/delete. Needs browser confirmation.
 - Fixed: delete of the open workspace left a stale sidebar (`router.push` alone). Create and delete-of-active now use `navigateAndRefresh` (push + refresh in one `startTransition`); API create/rename/delete also call `revalidatePath('/editor','layout')`. Needs browser confirmation.
-- Verify Features 04/06/07 end-to-end in a signed-in browser (sidebar list, create -> navigate, rename, delete).
+- Feature 08: `lib/project-access.ts` (`getIdentity()` = Clerk userId + primary email; `getAccessibleProject(id, identity)` = owner OR collaborator by email, case-insensitive; missing and forbidden both return null). `app/editor/[roomId]/page.tsx` (server component, renamed from `[projectId]`): signed out -> `redirect('/sign-in')`; no access or nonexistent -> `components/editor/access-denied.tsx` (centered, lock icon, message, link to `/editor`); else `components/editor/workspace-shell.tsx` (client, full-viewport `h-dvh`: navbar with project name + Share button + AI sidebar toggle, existing `ProjectSidebar` with current room highlighted, central dark canvas placeholder, right AI sidebar placeholder; Share has no behavior). To give the workspace its own chrome, the old `app/editor/layout.tsx` + `page.tsx` moved into route group `app/editor/(home)/` (URLs unchanged). `EditorNavbar` gained optional `title` + `actions`; `ProjectSidebar` gained `currentRoomId` and its project names are now `<Link>`s to `/editor/<id>` (previously not navigable). `libs/projects-data.ts` reuses `getIdentity()`. tsc, eslint, `bun run build` pass; access query verified against the DB (owner, collaborator case-insensitive, stranger, no-email stranger, missing) with temporary rows. Not exercised in a signed-in browser. Stale `.next/dev/types` broke the build after the route move; deleting that generated dir fixed it.
+- Feature 09: APIs `GET/POST /api/projects/[projectId]/collaborators` (GET: owner or collaborator, returns `role` + list; POST: owner only, email trimmed+lowercased+validated, 400 invalid/own email, 409 duplicate) and `DELETE .../collaborators/[collaboratorId]` (owner only, scoped to the project, 404 if not found). Statuses: 401 signed out, 404 missing project, 403 no access / not owner. `lib/project-access.ts` gained `getProjectRole()` (owner | collaborator | null; distinguishes missing vs forbidden). `lib/collaborators.ts` (server-only) enriches emails via Clerk Backend API `users.getUserList({emailAddress})` with display name + avatar (`hasImage` only), email-only fallback, best-effort (errors are logged, list still returns). No local user table. UI: `components/editor/share-dialog.tsx` (built on `EditorDialog`; owners get invite form + remove buttons, collaborators a read-only list; avatar with initial fallback; Copy link -> `Copied!` for 2s; list fetched each time it opens) opened from the navbar Share button in `workspace-shell.tsx`. tsc, eslint, `bun run build` pass. Verified against the DB with the Clerk identity mocked (18 checks: 401/404/400/409/403/201/204, collaborator read-only, cross-project delete blocked) and a real Clerk lookup for a nonexistent email (falls back to email only). NOT verified in a signed-in browser; real name/avatar enrichment for an existing Clerk user not exercised.
+- Verify Features 04/06/07/08/09 end-to-end in a signed-in browser (sidebar list, create -> navigate, rename, delete).
 
 ## Next Up
 

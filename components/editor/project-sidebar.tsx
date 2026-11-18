@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FolderOpen, Pencil, Plus, Trash2, Users, X } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -15,6 +16,8 @@ type ProjectSidebarProps = {
   projects: Project[];
   onRenameProject: (project: Project) => void;
   onDeleteProject: (project: Project) => void;
+  /** Room ID of the open workspace; highlighted in the list. */
+  currentRoomId?: string;
 };
 
 function EmptyState({ icon, message }: { icon: ReactNode; message: string }) {
@@ -28,16 +31,29 @@ function EmptyState({ icon, message }: { icon: ReactNode; message: string }) {
 
 function ProjectItem({
   project,
+  isCurrent,
   onRename,
   onDelete,
 }: {
   project: Project;
+  isCurrent: boolean;
   onRename: (project: Project) => void;
   onDelete: (project: Project) => void;
 }) {
   return (
-    <li className="group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm text-text-secondary hover:bg-bg-subtle hover:text-text-primary">
-      <span className="min-w-0 flex-1 truncate">{project.name}</span>
+    <li
+      className={cn(
+        "group flex items-center gap-1 rounded-md px-2 py-1.5 text-sm text-text-secondary hover:bg-bg-subtle hover:text-text-primary",
+        isCurrent && "bg-bg-subtle text-text-primary",
+      )}
+    >
+      <Link
+        href={`/editor/${project.id}`}
+        aria-current={isCurrent ? "page" : undefined}
+        className="min-w-0 flex-1 truncate"
+      >
+        {project.name}
+      </Link>
       {project.isOwner ? (
         <div className="flex shrink-0 items-center md:opacity-0 md:transition-opacity md:group-focus-within:opacity-100 md:group-hover:opacity-100">
           <Button
@@ -70,6 +86,7 @@ export function ProjectSidebar({
   projects,
   onRenameProject,
   onDeleteProject,
+  currentRoomId,
 }: ProjectSidebarProps) {
   const owned = projects.filter((p) => p.isOwner);
   const shared = projects.filter((p) => !p.isOwner);
@@ -123,6 +140,7 @@ export function ProjectSidebar({
                   <ProjectItem
                     key={project.id}
                     project={project}
+                    isCurrent={project.id === currentRoomId}
                     onRename={onRenameProject}
                     onDelete={onDeleteProject}
                   />
@@ -142,6 +160,7 @@ export function ProjectSidebar({
                   <ProjectItem
                     key={project.id}
                     project={project}
+                    isCurrent={project.id === currentRoomId}
                     onRename={onRenameProject}
                     onDelete={onDeleteProject}
                   />

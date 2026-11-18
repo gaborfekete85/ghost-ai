@@ -25,3 +25,11 @@ export function generateSuffix(): string {
 }
 
 export const ROOM_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** A shared user. Name/avatar come from Clerk and are null when no Clerk user matches the email. */
+export type Collaborator = {
+  id: string;
+  email: string;
+  name: string | null;
+  imageUrl: string | null;
+};
