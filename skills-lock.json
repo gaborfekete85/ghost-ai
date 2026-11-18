@@ -1,0 +1,61 @@
+{
+  "version": 2,
+  "skills": {
+    "clerk": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk/SKILL.md",
+      "computedHash": "2ac947ca5a20bd213d649c1c31429c690144539c9642348e20f9314a57cf5691"
+    },
+    "clerk-chrome-extension-patterns": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-chrome-extension-patterns/SKILL.md",
+      "computedHash": "73b414b2d765fb2c4734e399d5bed33792b80e001da22e2787a694200f7ee0f9"
+    },
+    "clerk-cli": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-cli/SKILL.md",
+      "computedHash": "ab11423e28cc143ddb75b31c4eba3d50a1f9d0247dc9ef1271e1317bc4bd5730"
+    },
+    "clerk-nextjs-patterns": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-nextjs-patterns/SKILL.md",
+      "computedHash": "5775102acceae0b132c1818a51147623da645880aa27ee2d9e3aa2a6358af357"
+    },
+    "clerk-react-patterns": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-react-patterns/SKILL.md",
+      "computedHash": "773d347defdef5d7a5089b11d1853802db1f8e1f9922cf2c7ee6690eec571319"
+    },
+    "clerk-react-router-patterns": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-react-router-patterns/SKILL.md",
+      "computedHash": "45a96d2aaff6bb9bd268a9842dafcb1a6ab5e82b14fc2082840d392a51ad620d"
+    },
+    "clerk-vue-patterns": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-vue-patterns/SKILL.md",
+      "computedHash": "537b7719f81276fbf9ba6aed0aaa262434c94310d90e81a6a6b6d2185cfd680f"
+    },
+    "clerk-webhooks": {
+      "source": "clerk/skills",
+      "commit": "164bf065db0d40becf583bf03c787c4775d17885",
+      "sourceType": "github",
+      "skillPath": "skills/clerk-webhooks/SKILL.md",
+      "computedHash": "b50cef6155462607f633da76c99f761a80eeae52819c6ba0b4ce0293561f165f"
+    }
+  }
+}
