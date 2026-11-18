@@ -9,6 +9,8 @@ const publicPaths = [
 
 function isPublicRoute(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  // API route handlers authenticate themselves and return 401 (protect() would 404).
+  if (pathname.startsWith("/api/")) return true;
   return publicPaths.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );

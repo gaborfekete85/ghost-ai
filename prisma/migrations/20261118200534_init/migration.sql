@@ -1,6 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "ghost";
-
 -- CreateEnum
 CREATE TYPE "ProjectStatus" AS ENUM ('DRAFT', 'ARCHIVED');
 

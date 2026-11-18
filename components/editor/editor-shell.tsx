@@ -6,11 +6,18 @@ import { EditorActionsContext } from "@/components/editor/editor-actions-context
 import { EditorNavbar } from "@/components/editor/editor-navbar";
 import { ProjectDialogs } from "@/components/editor/project-dialogs";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
-import { useProjectDialogs } from "@/components/editor/use-project-dialogs";
+import { useProjectActions } from "@/hooks/use-project-actions";
+import type { Project } from "@/libs/projects";
 
-export function EditorShell({ children }: { children: ReactNode }) {
+export function EditorShell({
+  children,
+  projects,
+}: {
+  children: ReactNode;
+  projects: Project[];
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const dialogs = useProjectDialogs();
+  const dialogs = useProjectActions();
 
   return (
     <EditorActionsContext.Provider
@@ -24,7 +31,7 @@ export function EditorShell({ children }: { children: ReactNode }) {
         <ProjectSidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
-          projects={dialogs.projects}
+          projects={projects}
           onNewProject={dialogs.openCreate}
           onRenameProject={dialogs.openRename}
           onDeleteProject={dialogs.openDelete}
