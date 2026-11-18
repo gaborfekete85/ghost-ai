@@ -5,12 +5,11 @@ change.
 
 ## Current Phase
 
-- Feature 04 (project dialogs) in progress; Feature 03 (auth) awaiting review
+- Feature 05 (Prisma) implemented except the DB migration (blocked on DB permissions); Feature 04 awaiting review
 
 ## Current Goal
 
-- Feature 04: editor home + create/rename/delete project dialogs + sidebar actions (mock data only). Spec in
-  `context/feature-specs/04-project-dialogs.md`
+- Feature 05: Prisma models, client singleton, first migration. Spec in `context/feature-specs/05-prisma.md`
 
 ## Completed
 
@@ -34,13 +33,15 @@ change.
 
 - Feature 04: `libs/projects.ts` (Project type, `slugify`, mock data), `components/editor/use-project-dialogs.ts` (dialog/form/loading state, in-memory create/rename/delete with simulated delay), `project-dialogs.tsx` (Create with live slug preview, Rename prefilled + autofocus + Enter submits, Delete destructive confirm), `editor-home.tsx` (heading, description, New Project button) via `editor-actions-context.tsx`. Sidebar lists mock projects; rename/delete icons only on owned projects; mobile backdrop scrim closes sidebar. tsc + eslint clean. NOT yet verified in browser (needs sign-in).
 
+- Feature 05: downgraded CLI to Prisma 7 (`prisma@7.10.1`, matches `@prisma/client`); removed the v8 RC scaffold (`src/prisma`, v8 `prisma.config.ts`, `prisma-8.md`, `@prisma/orm-postgres`, `@prisma/cli-engine`). Added `prisma/schema.prisma` (generator `prisma-client` -> `generated/prisma`, gitignored + eslint-ignored), `prisma/models/project.prisma` (`ProjectStatus`, `Project`, `ProjectCollaborator` with cascade, unique project/email, required indexes), `prisma.config.ts` (loads `.env.local`, schema dir `prisma`), `lib/prisma.ts` (cached singleton on `globalThis`; `prisma+postgres://` -> Accelerate, else `@prisma/adapter-pg` honoring `?schema=`). Installed `@prisma/extension-accelerate` (needed for the Accelerate branch). Migration SQL generated at `prisma/migrations/20261118200534_init` (via `migrate diff`, since `migrate dev` needs a shadow DB). `prisma generate` + `bun run build` pass.
+
 ## In Progress
 
-- None (Feature 04 awaiting review).
+- Feature 05 migration NOT applied: `ghost_admin` has no CREATE on schema `ghost` (owner `postgres`) or on the database, so `migrate deploy` fails creating `_prisma_migrations`. Needs a superuser to run `GRANT USAGE, CREATE ON SCHEMA ghost TO ghost_admin;`, then `bunx prisma migrate deploy`.
 
 ## Next Up
 
-- Feature 05 (see `context/feature-specs/`)
+- Apply the Feature 05 migration, then Feature 06 (see `context/feature-specs/`)
 
 ## Open Questions
 

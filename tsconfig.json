@@ -21,7 +21,10 @@
     "paths": {
       "@/*": ["./*"],
       "cn": ["./libs/utils.ts"]
-    }
+    },
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "next-env.d.ts",
