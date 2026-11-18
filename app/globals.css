@@ -4,6 +4,26 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-bg-base: #080809;
+  --color-bg-surface: #111114;
+  --color-bg-elevated: #18181c;
+  --color-bg-subtle: #1e1e23;
+  --color-border-default: #2a2a30;
+  --color-border-subtle: #3a3a42;
+  --color-text-primary: #f0f0f4;
+  --color-text-secondary: #c0c0cc;
+  --color-text-muted: #808090;
+  --color-text-faint: #505060;
+  --color-accent-primary: #00c8d4;
+  --color-accent-primary-dim: rgba(0, 200, 212, 0.12);
+  --color-accent-ai: #6457f9;
+  --color-accent-ai-text: #8b82ff;
+  --color-state-error: #ff4d4f;
+  --color-state-success: #34d399;
+  --color-state-warning: #fbbf24;
+}
+
+@theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-background: var(--background);
@@ -58,6 +78,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
