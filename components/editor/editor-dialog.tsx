@@ -22,7 +22,7 @@ type EditorDialogProps = {
   /** Footer actions, typically `Button`s. */
   footer?: ReactNode;
   className?: string;
-} & Pick<ComponentProps<typeof DialogContent>, "showCloseButton">;
+} & Pick<ComponentProps<typeof DialogContent>, "showCloseButton" | "onCloseAutoFocus">;
 
 /**
  * Reusable dialog pattern: title, description, body and footer actions,
@@ -37,11 +37,13 @@ export function EditorDialog({
   footer,
   className,
   showCloseButton,
+  onCloseAutoFocus,
 }: EditorDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={showCloseButton}
+        onCloseAutoFocus={onCloseAutoFocus}
         className={cn(
           "border-border-default bg-bg-elevated text-text-primary",
           className,
