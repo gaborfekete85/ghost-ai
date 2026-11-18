@@ -5,12 +5,12 @@ change.
 
 ## Current Phase
 
-- Feature 03 (auth) implemented — awaiting review
+- Feature 04 (project dialogs) in progress; Feature 03 (auth) awaiting review
 
 ## Current Goal
 
-- None active. Last goal: Feature 03, spec in
-  `context/feature-specs/03-auth.md`
+- Feature 04: editor home + create/rename/delete project dialogs + sidebar actions (mock data only). Spec in
+  `context/feature-specs/04-project-dialogs.md`
 
 ## Completed
 
@@ -32,13 +32,15 @@ change.
 
 - Feature 03 restyle (per `context/feature-asset/auth.jpg`): auth layout is now 50/50 on lg; left panel uses `bg-bg-surface` against the `bg-bg-base` right side, with headline, description, icon+title+description feature list and footer. Body uses `font-sans` (Geist via `--font-sans`; Clerk uses the same). Removed `new Date()` from the footer, which broke prerendering under Cache Components.
 
+- Feature 04: `libs/projects.ts` (Project type, `slugify`, mock data), `components/editor/use-project-dialogs.ts` (dialog/form/loading state, in-memory create/rename/delete with simulated delay), `project-dialogs.tsx` (Create with live slug preview, Rename prefilled + autofocus + Enter submits, Delete destructive confirm), `editor-home.tsx` (heading, description, New Project button) via `editor-actions-context.tsx`. Sidebar lists mock projects; rename/delete icons only on owned projects; mobile backdrop scrim closes sidebar. tsc + eslint clean. NOT yet verified in browser (needs sign-in).
+
 ## In Progress
 
-- None.
+- None (Feature 04 awaiting review).
 
 ## Next Up
 
-- Feature 04 (see `context/feature-specs/`)
+- Feature 05 (see `context/feature-specs/`)
 
 ## Open Questions
 
